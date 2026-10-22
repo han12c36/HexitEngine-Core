@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_es
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: La partida ya ha comenzado.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: No se pudo iniciar el host.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: No se pudo iniciar el cliente.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: "Se ha perdido la conexi\xF3n con el servidor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "Se agot\xF3 el tiempo de conexi\xF3n con el servidor."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: "Ya te est\xE1s uniendo a una sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: "Es necesario iniciar sesi\xF3n en Steam."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: No se pudo crear la sala.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: "Sala no v\xE1lida."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: "C\xF3digo no v\xE1lido."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: No hay salas disponibles.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: La sala ya no existe.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: "La sala est\xE1 llena."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: No se pudo unir a la sala.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: "La sesi\xF3n anterior a\xFAn no ha terminado."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: No se pudo cargar la escena Ready.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: "Se ha cancelado la creaci\xF3n de la sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: "Se ha cancelado la uni\xF3n."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: "Se ha cancelado la uni\xF3n r\xE1pida."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: Error al crear la sala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: Error al unirse a la sala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: "Error en la uni\xF3n r\xE1pida"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: Error al conectar con el servidor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: "Se ha perdido la conexi\xF3n con la sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: Te han expulsado de la sala.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: "El anfitri\xF3n se ha ido y la sala se ha cerrado."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: '{0} se ha unido.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: '{0} se ha ido.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: "\xBFSeguro que quieres salir?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Si el anfitri\xF3n sale, la sala se cerrar\xE1 para todos. \xBFSalir de todos modos?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

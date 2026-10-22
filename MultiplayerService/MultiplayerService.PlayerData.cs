@@ -174,6 +174,9 @@ namespace HexitEngine
         {
             //if (!IsSpawned) return;
 
+            // 이미 비어 있으면 건드리지 않음 (스폰 전에 Clear하면 NGO가 경고를 냄)
+            if (playerDatas.Count == 0) return;
+
             playerDatas.Clear();
         }
     }

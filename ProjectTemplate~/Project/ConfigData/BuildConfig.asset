@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3942603add525404691d191eb4845d30, type: 3}
+  m_Name: BuildConfig
+  m_EditorClassIdentifier: Assembly-CSharp::HexitEngine.BuildConfig
+  releaseAppId: 111
+  testMode: 1
+  networkManagerPrefab: {fileID: 3223634264168638416, guid: 0a80c9725b959364ba5408ca5b2b306e, type: 3}

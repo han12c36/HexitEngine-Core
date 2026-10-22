@@ -11,9 +11,16 @@ namespace HexitEngine
     /// 계약: 보이스 참가자는 "Dissonance 세션 입장" + "PlayerData 존재(isConnected)" 두 조건이 모두 충족될 때만 생성됩니다.
     /// 둘 중 무엇이 먼저 도착하든 대기열에서 기다렸다가, 나머지가 도착하는 순간 OnParticipantJoined가 발생합니다.
     /// 따라서 UI는 이벤트를 받는 시점에 항상 유효한 PlayerData를 가지고 있습니다. (캐릭터 스폰과 같은 계약)
+    ///
+    /// VoiceService는 다른 서비스를 직접 참조하지 않습니다.
+    /// - PlayerData 조회 함수: HEXITEngine이 SetPlayerDataResolver로 연결합니다.
+    /// - PlayerData 변경 알림: HEXITEngine이 NotifyPlayerDatasChanged를 호출합니다.
     /// </summary>
     public partial class VoiceService
     {
+        /// <summary> SteamID로 PlayerData를 찾는 함수 형식 </summary>
+        public delegate bool PlayerDataResolver(ulong steamId, out PlayerData playerData);
+
         /// <summary> 로스터에 올라간 참가자 (SteamID 기준) </summary>
         private readonly Dictionary<ulong, VoiceParticipant> participants = new();
 
@@ -24,7 +31,8 @@ namespace HexitEngine
         private readonly List<ulong> syncBuffer = new();
         private readonly List<ulong> promoteBuffer = new();
 
-        private MultiplayerService boundMultiplayer;
+        /// <summary> PlayerData 조회 함수. HEXITEngine이 초기화 시 연결합니다. </summary>
+        private PlayerDataResolver playerDataResolver;
 
         /// <summary> 로스터 추적 중인지 여부 </summary>
         public bool IsStartedSession { get; private set; }
@@ -67,8 +75,6 @@ namespace HexitEngine
 
             IsStartedSession = true;
 
-            BindPlayerDatas();
-
             // 이미 Dissonance 세션에 있는 사람들(나 포함)을 대기열에 올리고 승격 시도
             foreach (var state in dissonanceComms.Players) HandleVoiceJoined(state);
         }
@@ -83,8 +89,6 @@ namespace HexitEngine
             }
 
             IsStartedSession = false;
-
-            UnbindPlayerDatas();
 
             syncBuffer.Clear();
             syncBuffer.AddRange(participants.Keys);
@@ -127,23 +131,11 @@ namespace HexitEngine
 
         #region PlayerData Sync
 
-        private void BindPlayerDatas()
-        {
-            UnbindPlayerDatas();
+        /// <summary> PlayerData 조회 함수를 연결합니다. (HEXITEngine 전용) </summary>
+        public void SetPlayerDataResolver(PlayerDataResolver resolver) => playerDataResolver = resolver;
 
-            boundMultiplayer = MultiplayerService.Singleton;
-            if (boundMultiplayer == null) return;
-
-            boundMultiplayer.OnPlayerDatasChanged += HandlePlayerDatasChanged;
-        }
-
-        private void UnbindPlayerDatas()
-        {
-            if (boundMultiplayer != null) boundMultiplayer.OnPlayerDatasChanged -= HandlePlayerDatasChanged;
-            boundMultiplayer = null;
-        }
-
-        private void HandlePlayerDatasChanged(object sender, MultiplayerService.PlayerDatasChangedEventArgs e)
+        /// <summary> PlayerData 목록이 바뀌었을 때 HEXITEngine이 호출합니다. 로스터를 최신 PlayerData와 맞춥니다. </summary>
+        public void NotifyPlayerDatasChanged()
         {
             if (!IsStartedSession) return;
 
@@ -229,14 +221,14 @@ namespace HexitEngine
             participant.Cleanup();
         }
 
-        private static bool TryGetConnectedPlayerData(ulong steamId, out PlayerData playerData)
+        /// <summary> 접속 중인 PlayerData 조회. 조회 함수가 연결되지 않았으면 false </summary>
+        private bool TryGetConnectedPlayerData(ulong steamId, out PlayerData playerData)
         {
             playerData = PlayerData.EmptyData;
 
-            var multiplayer = MultiplayerService.Singleton;
-            if (multiplayer == null) return false;
+            if (playerDataResolver == null) return false;
 
-            return multiplayer.TryGetPlayerDataBySteamId(steamId, out playerData) && playerData.isConnected;
+            return playerDataResolver(steamId, out playerData) && playerData.isConnected;
         }
 
         /// <summary> Dissonance 참가자 이름(SteamID 문자열)을 ulong으로 변환합니다. </summary>

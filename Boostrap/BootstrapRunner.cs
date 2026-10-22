@@ -217,8 +217,8 @@ namespace HexitEngine
         {
             // 1. 현재 로드된 모든 씬(DontDestroyOnLoad 포함)에서 활성 상태인 ISingleton 수집
             var found = new Dictionary<string, MonoBehaviour>();
-            var behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
+            //var behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include);
             foreach (var behaviour in behaviours)
             {
                 if (behaviour is not ISingleton) continue;

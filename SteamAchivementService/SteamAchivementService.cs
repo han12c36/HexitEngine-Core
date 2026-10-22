@@ -5,7 +5,7 @@ namespace HexitEngine
 {
     public class SteamAchievementService : LocalSingleton<SteamAchievementService>
     {
-        /// <summary> ¾÷ÀûÀ» ÇØÁ¦ÇÕ´Ï´Ù. ÀÌ¹Ì ÇØÁ¦µÈ ¾÷ÀûÀÌ¸é ¾Æ¹«°Íµµ ÇÏÁö ¾Ê½À´Ï´Ù. </summary>
+        /// <summary> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Æ¹ï¿½ï¿½Íµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. </summary>
         public void UnlockAchievement(string achievementId)
         {
             if (!CanUse(achievementId)) return;
@@ -14,23 +14,23 @@ namespace HexitEngine
 
             if (achievement.State) return;
 
-            // Trigger´Â ÇØÁ¦¿Í µ¿½Ã¿¡ Steam ¼­¹ö¿¡ ÀúÀå±îÁö ¿äÃ»ÇÕ´Ï´Ù.
+            // Triggerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ Steam ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½Õ´Ï´ï¿½.
             if (!achievement.Trigger())
             {
-                Dev.LogWarn($"[Achievement] ÇØÁ¦ ½ÇÆÐ: '{achievementId}' (Steamworks¿¡ µî·ÏµÈ API NameÀÎÁö È®ÀÎ)");
+                Dev.LogWarn($"[Achievement] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: '{achievementId}' (Steamworksï¿½ï¿½ ï¿½ï¿½Ïµï¿½ API Nameï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½)");
             }
         }
 
-        /// <summary> ¾÷Àû ÇØÁ¦ ¿©ºÎ. SteamÀ» »ç¿ëÇÒ ¼ö ¾øÀ¸¸é false. </summary>
+        /// <summary> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. Steamï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ false. </summary>
         public bool IsAchievementUnlocked(string achievementId)
         {
             if (!CanUse(achievementId)) return false;
 
             return new Achievement(achievementId).State;
         }
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        /// <summary> [°³¹ß¿ë] ¾÷ÀûÀ» ´Ù½Ã Àá±Þ´Ï´Ù. Ãâ½Ã ºôµå¿¡´Â Æ÷ÇÔµÇÁö ¾Ê½À´Ï´Ù. </summary>
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
+//#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary> [ï¿½ï¿½ï¿½ß¿ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½Þ´Ï´ï¿½. ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. </summary>
         public void ClearAchievement(string achievementId)
         {
             if (!CanUse(achievementId)) return;
@@ -43,7 +43,7 @@ namespace HexitEngine
         {
             if (string.IsNullOrEmpty(achievementId))
             {
-                Dev.LogWarn("[Achievement] ¾÷Àû ID°¡ ºñ¾î ÀÖ½À´Ï´Ù.");
+                Dev.LogWarn("[Achievement] ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
                 return false;
             }
 

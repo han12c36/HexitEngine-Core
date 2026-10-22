@@ -90,8 +90,6 @@ namespace HexitEngine
                 dissonanceComms.OnPlayerJoinedSession -= HandleVoiceJoined;
                 dissonanceComms.OnPlayerLeftSession -= HandleVoiceLeft;
             }
-
-            UnbindPlayerDatas();
         }
 
         #endregion

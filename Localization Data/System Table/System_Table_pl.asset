@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_pl
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: pl
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: "Gra ju\u017C si\u0119 rozpocz\u0119\u0142a."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: "Nie uda\u0142o si\u0119 uruchomi\u0107 hosta."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: "Nie uda\u0142o si\u0119 uruchomi\u0107 klienta."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: "Roz\u0142\u0105czono z serwerem."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "Up\u0142yn\u0105\u0142 limit czasu po\u0142\u0105czenia z serwerem."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: "Ju\u017C do\u0142\u0105czasz do pokoju."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: Wymagane jest zalogowanie do Steam.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: "Nie uda\u0142o si\u0119 utworzy\u0107 pokoju."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: "Nieprawid\u0142owy pok\xF3j."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: "Nieprawid\u0142owy kod."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: "Brak dost\u0119pnych pokoi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: "Ten pok\xF3j ju\u017C nie istnieje."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: "Pok\xF3j jest pe\u0142ny."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: "Nie uda\u0142o si\u0119 do\u0142\u0105czy\u0107 do pokoju."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: "Poprzednia sesja jeszcze si\u0119 nie zako\u0144czy\u0142a."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: "Nie uda\u0142o si\u0119 wczyta\u0107 sceny Ready."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: Anulowano tworzenie pokoju.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: "Anulowano do\u0142\u0105czanie."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: "Anulowano szybkie do\u0142\u0105czanie."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: "Nie uda\u0142o si\u0119 utworzy\u0107 pokoju"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: "Nie uda\u0142o si\u0119 do\u0142\u0105czy\u0107 do pokoju"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: "Szybkie do\u0142\u0105czanie nie powiod\u0142o si\u0119"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: "Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107 z serwerem"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: "Roz\u0142\u0105czono z pokojem."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: "Zosta\u0142e\u015B wyrzucony z pokoju."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: "Gospodarz wyszed\u0142, pok\xF3j zosta\u0142 zamkni\u0119ty."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: "{0} do\u0142\u0105czy\u0142."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: "{0} wyszed\u0142."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: "Czy na pewno chcesz wyj\u015B\u0107?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Je\u015Bli gospodarz wyjdzie, pok\xF3j zostanie zamkni\u0119ty dla wszystkich. Wyj\u015B\u0107 mimo to?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

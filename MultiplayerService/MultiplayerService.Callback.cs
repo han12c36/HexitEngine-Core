@@ -10,6 +10,8 @@ namespace HexitEngine
         Clear = 2,
     }
 
+    // 연결 종료/거절 사유 키는 SystemKeys(System_Table)로 옮겼습니다. MultiplayerService는 번역하지 않은 키만 보내고, HEXITEngine이 번역합니다.
+
     public partial class MultiplayerService : ServerSingleton<MultiplayerService>
     {
         //public event EventHandler<PlayerDatasChangedEventArgs> OnPlayerDatasChanged;
@@ -27,7 +29,7 @@ namespace HexitEngine
         //public event EventHandler<OnClientDisconnectedEventArgs> OnClientDisconnected;
         public EventHandler<OnClientEventArgs> OnClientDisconnected { get; set; }
 
-        /// <summary> 본인이 서버 연결 끊킴을 인지 시 호출</summary>
+        /// <summary> 본인이 서버 연결 끊킴을 인지 시 호출. reasonKey만 채워서 보내며, 번역은 HEXITEngine이 합니다. </summary>
         public EventHandler<OnDisconnectedEventArgs> OnDisconnected { get; set; }
 
         /// <summary> 호스트가 타인의 서버 연결 끊킴을 인지 시 호출 </summary>
@@ -48,7 +50,11 @@ namespace HexitEngine
 
         public class OnDisconnectedEventArgs : EventArgs
         {
+            /// <summary> 화면 표시용 문구. HEXITEngine이 reasonKey를 번역해서 채웁니다. </summary>
             public string reason;
+
+            /// <summary> 사유 키 (SystemKeys). 엔진이 정의하지 않은 사유면 원문이 그대로 들어 있습니다. </summary>
+            public string reasonKey;
         }
 
         public class OnClientEventArgs : EventArgs

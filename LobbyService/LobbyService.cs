@@ -7,7 +7,7 @@ using Steamworks.Data;
 
 namespace HexitEngine
 {
-    /// <summary> Steam 로비 데이터 키와 값. LobbyService와 MultiplayerService가 공유합니다. </summary>
+    /// <summary> Steam 로비 데이터 키와 값 </summary>
     public static class LobbyKeys
     {
         public const string JoinCode = "JoinCode";
@@ -23,6 +23,7 @@ namespace HexitEngine
     /// <summary>
     /// Steam 로비 생성/참가/퇴장, 참가 코드, 잠금.
     /// 실패 시 Steam에 로비가 남아 있는 상태(유령 로비)가 되지 않도록, 입장 후 실패하면 반드시 나갑니다.
+    /// 실패 이벤트에는 번역하지 않은 사유 키(SystemKeys)만 담습니다. 예외 원문은 로그로만 남깁니다.
     /// </summary>
     public partial class LobbyService : LocalSingleton<LobbyService>
     {
@@ -47,11 +48,17 @@ namespace HexitEngine
 
         #region Lifecycle
 
-        /// <summary> 로비 데이터 변경(강퇴)과 Steam 오버레이 초대 수락 이벤트를 구독합니다. 기다릴 작업이 없으므로 즉시 완료됩니다. </summary>
+        /// <summary> 로비 데이터 변경(강퇴), 멤버 퇴장, Steam 오버레이 초대 수락 이벤트를 구독합니다. 기다릴 작업이 없으므로 즉시 완료됩니다. </summary>
         protected override UniTask OnInitializeAsync(CancellationToken ct)
         {
             SteamMatchmaking.OnLobbyDataChanged -= OnLobbyDataChangedCallback;
             SteamMatchmaking.OnLobbyDataChanged += OnLobbyDataChangedCallback;
+
+            SteamMatchmaking.OnLobbyMemberLeave -= OnLobbyMemberLeaveCallback;
+            SteamMatchmaking.OnLobbyMemberLeave += OnLobbyMemberLeaveCallback;
+
+            SteamMatchmaking.OnLobbyMemberDisconnected -= OnLobbyMemberLeaveCallback;
+            SteamMatchmaking.OnLobbyMemberDisconnected += OnLobbyMemberLeaveCallback;
 
             SteamFriends.OnGameLobbyJoinRequested -= OnGameLobbyJoinRequestedCallback;
             SteamFriends.OnGameLobbyJoinRequested += OnGameLobbyJoinRequestedCallback;
@@ -62,6 +69,8 @@ namespace HexitEngine
         protected override void OnDestroyed()
         {
             SteamMatchmaking.OnLobbyDataChanged -= OnLobbyDataChangedCallback;
+            SteamMatchmaking.OnLobbyMemberLeave -= OnLobbyMemberLeaveCallback;
+            SteamMatchmaking.OnLobbyMemberDisconnected -= OnLobbyMemberLeaveCallback;
             SteamFriends.OnGameLobbyJoinRequested -= OnGameLobbyJoinRequestedCallback;
         }
 
@@ -69,16 +78,18 @@ namespace HexitEngine
 
         #region Create / Join
 
+        /// <summary>
+        /// 로비를 생성합니다. 실패하면 반드시 OnCreateLobbyFailedToLobby가 발생합니다. (취소는 예외로 전달)
+        /// 시작 이벤트는 HEXITEngine이 발생시킵니다.
+        /// </summary>
         public async Task<LobbyResult> CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
 
-            if (isJoiningLobby) return LobbyResult.Fail(0, "System", "Already joining lobby.");
-            if (!SteamAuthService.IsInitialized) return LobbyResult.Fail(0, "System", "Steam login required.");
+            if (isJoiningLobby) return FailCreate(SystemKeys.AlreadyJoiningLobby);
+            if (!SteamAuthService.IsInitialized) return FailCreate(SystemKeys.SteamLoginRequired);
 
             isJoiningLobby = true;
-
-            OnCreateLobbyStartedToLobby?.Invoke(this, EventArgs.Empty);
 
             Lobby? createdLobby = null;
 
@@ -116,22 +127,32 @@ namespace HexitEngine
             catch (Exception e)
             {
                 LeaveIfNotRecorded(createdLobby);
-                OnCreateLobbyFailedToLobby?.Invoke(this, new OnLobbyCreateFailedEventArgs(e.Message));
-                return LobbyResult.Fail(0, "System", e.Message);
+
+                // 실패 직후 바로 다시 시도할 수 있도록 쿨타임 없이 잠금 해제
+                isJoiningLobby = false;
+
+                Dev.LogWarn($"로비 생성 실패: {e.Message}");
+                return FailCreate(SystemKeys.LobbyCreateFailed);
             }
-            finally { _ = StartJoinLobbyDelayAsync(ct); }
+            finally
+            {
+                // 실패로 이미 잠금이 풀렸다면 쿨타임을 주지 않음
+                if (isJoiningLobby) _ = StartJoinLobbyDelayAsync(ct);
+            }
         }
 
+        /// <summary>
+        /// 로비 ID로 참가합니다. 실패하면 반드시 OnJoinFailedToLobby가 발생합니다. (취소는 예외로 전달)
+        /// 시작 이벤트는 HEXITEngine이 발생시킵니다.
+        /// </summary>
         public async Task<LobbyResult> JoinLobbyAsync(string lobbyIdString, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
 
-            if (isJoiningLobby) return LobbyResult.Fail(0, "System", "Already joining lobby.");
-            if (!ulong.TryParse(lobbyIdString, out ulong lobbyId)) return LobbyResult.Fail(0, "System", "Invalid lobby ID.");
+            if (isJoiningLobby) return FailJoinEarly(SystemKeys.AlreadyJoiningLobby);
+            if (!ulong.TryParse(lobbyIdString, out ulong lobbyId)) return FailJoinEarly(SystemKeys.InvalidLobbyId);
 
             isJoiningLobby = true;
-
-            OnJoinStartedToLobby?.Invoke(this, EventArgs.Empty);
 
             var targetLobby = new Lobby(lobbyId);
             bool hasEntered = false;
@@ -142,7 +163,8 @@ namespace HexitEngine
 
                 if (joinResult != RoomEnter.Success)
                 {
-                    FailJoin($"{joinResult}", joinResult);
+                    Dev.LogWarn($"로비 입장 실패: {joinResult}");
+                    FailJoin(ToJoinFailedKey(joinResult), joinResult);
                     return LobbyResult.Fail(0, "System", $"{joinResult}");
                 }
 
@@ -165,7 +187,9 @@ namespace HexitEngine
             catch (Exception e)
             {
                 if (hasEntered) targetLobby.Leave();
-                FailJoin(e.Message, null);
+
+                Dev.LogWarn($"로비 입장 실패: {e.Message}");
+                FailJoin(SystemKeys.LobbyJoinFailed, null);
                 return LobbyResult.Fail(0, "System", e.Message);
             }
             finally
@@ -175,9 +199,10 @@ namespace HexitEngine
             }
         }
 
+        /// <summary> 참가 코드로 방을 찾아 참가합니다. 실패하면 반드시 OnJoinFailedToLobby가 발생합니다. (취소는 예외로 전달) </summary>
         public async Task<LobbyResult> JoinLobbyByCodeAsync(string joinCode, CancellationToken ct = default)
         {
-            if (isJoiningLobby) return LobbyResult.Fail(0, "System", "Already joining lobby.");
+            if (isJoiningLobby) return FailJoinEarly(SystemKeys.AlreadyJoiningLobby);
 
             try
             {
@@ -195,9 +220,8 @@ namespace HexitEngine
 
                 if (!target.HasValue)
                 {
-                    const string failMessage = "Invalid code.";
-                    OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(failMessage));
-                    return LobbyResult.Fail(0, "Lobby", failMessage);
+                    OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(SystemKeys.InvalidJoinCode));
+                    return LobbyResult.Fail(0, "Lobby", SystemKeys.InvalidJoinCode);
                 }
 
                 // 이후 입장 과정의 실패는 JoinLobbyAsync가 OnJoinFailedToLobby를 발생시킴
@@ -206,14 +230,23 @@ namespace HexitEngine
             catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
-                OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(e.Message));
-                return LobbyResult.Fail(0, "System", e.Message);
+                Dev.LogWarn($"코드 참가 실패: {e.Message}");
+                OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(SystemKeys.LobbyJoinFailed));
+                return LobbyResult.Fail(0, "System", SystemKeys.LobbyJoinFailed);
             }
         }
 
+        /// <summary>
+        /// 들어갈 수 있는 방을 찾아 참가합니다. (취소는 예외로 전달)
+        /// 방을 못 찾으면 OnQuickJoinFailedToLobby, 찾은 방 입장에 실패하면 OnJoinFailedToLobby가 발생합니다.
+        /// </summary>
         public async Task<LobbyResult> QuickJoinLobbyAsync(CancellationToken ct = default)
         {
-            if (isJoiningLobby) return LobbyResult.Fail(0, "System", "Already joining lobby.");
+            if (isJoiningLobby)
+            {
+                OnQuickJoinFailedToLobby?.Invoke(this, new OnLobbyQuickJoinFailedEventArgs(SystemKeys.AlreadyJoiningLobby));
+                return LobbyResult.Fail(0, "System", SystemKeys.AlreadyJoiningLobby);
+            }
 
             try
             {
@@ -230,9 +263,8 @@ namespace HexitEngine
 
                 if (!target.HasValue)
                 {
-                    const string failMessage = "No available rooms found.";
-                    OnQuickJoinFailedToLobby?.Invoke(this, new OnLobbyQuickJoinFailedEventArgs(failMessage));
-                    return LobbyResult.Fail(0, "Lobby", failMessage);
+                    OnQuickJoinFailedToLobby?.Invoke(this, new OnLobbyQuickJoinFailedEventArgs(SystemKeys.NoAvailableRoom));
+                    return LobbyResult.Fail(0, "Lobby", SystemKeys.NoAvailableRoom);
                 }
 
                 return await JoinLobbyAsync(target.Value.Id.ToString(), ct);
@@ -240,8 +272,9 @@ namespace HexitEngine
             catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
-                OnQuickJoinFailedToLobby?.Invoke(this, new OnLobbyQuickJoinFailedEventArgs(e.Message));
-                return LobbyResult.Fail(0, "System", e.Message);
+                Dev.LogWarn($"빠른 참가 실패: {e.Message}");
+                OnQuickJoinFailedToLobby?.Invoke(this, new OnLobbyQuickJoinFailedEventArgs(SystemKeys.LobbyJoinFailed));
+                return LobbyResult.Fail(0, "System", SystemKeys.LobbyJoinFailed);
             }
         }
 
@@ -270,6 +303,19 @@ namespace HexitEngine
                 lobby.SetData(LobbyKeys.KickTarget, targetSteamId);
             }
             catch (Exception e) { Dev.LogError($"[Lobby] {e.Message}"); }
+        }
+
+        /// <summary> 참가한 로비의 현재 멤버인지 (Steam 로비 기준) </summary>
+        public bool IsLobbyMember(ulong steamId)
+        {
+            if (!JoinedLobby.HasValue) return false;
+
+            foreach (var member in JoinedLobby.Value.Members)
+            {
+                if (member.Id.Value == steamId) return true;
+            }
+
+            return false;
         }
 
         public void OpenInviteOverlay()
@@ -344,25 +390,55 @@ namespace HexitEngine
             // 3. 타겟이 비어있지 않고, 그 타겟이 '나'라면
             if (!string.IsNullOrEmpty(kickedId) && kickedId == SteamAuthService.SteamId.ToString())
             {
+                // 네트워크 종료는 HEXITEngine이 OnKickedFromLobby를 받아서 처리
                 LeaveLobby();
-
-                if (MultiplayerService.Singleton != null)
-                {
-                    MultiplayerService.Singleton.ShutdownNetwork();
-                }
 
                 OnKickedFromLobby?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        /// <summary> 입장 실패 처리: 이벤트 발생, 쿨타임 없이 잠금 해제, 유령 방일 가능성이 높으므로 목록 새로고침 </summary>
-        private void FailJoin(string message, RoomEnter? reason)
+        /// <summary>
+        /// 참가한 로비에서 다른 멤버가 나감(정상 퇴장, 게임 종료, 강제 종료 모두).
+        /// 게임 프로세스가 끝나면 Steam 클라이언트가 로비에서 바로 빼 주므로, 네트워크 시간 초과보다 훨씬 빨리 알 수 있습니다.
+        /// </summary>
+        private void OnLobbyMemberLeaveCallback(Lobby lobby, Friend member)
         {
-            OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(message, reason));
+            if (!JoinedLobby.HasValue || JoinedLobby.Value.Id != lobby.Id) return;
+            if (member.Id.Value == SteamAuthService.SteamId) return;
+
+            OnLobbyMemberLeft?.Invoke(this, new OnLobbyMemberLeftEventArgs(member.Id.Value));
+        }
+
+        /// <summary> 생성 실패 처리: 이벤트 발생 후 실패 결과 반환 </summary>
+        private LobbyResult FailCreate(string reasonKey)
+        {
+            OnCreateLobbyFailedToLobby?.Invoke(this, new OnLobbyCreateFailedEventArgs(reasonKey));
+            return LobbyResult.Fail(0, "System", reasonKey);
+        }
+
+        /// <summary> 입장 시도 전 실패 처리(잠금을 걸기 전): 이벤트 발생 후 실패 결과 반환. 잠금은 건드리지 않습니다. </summary>
+        private LobbyResult FailJoinEarly(string reasonKey)
+        {
+            OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(reasonKey));
+            return LobbyResult.Fail(0, "System", reasonKey);
+        }
+
+        /// <summary> 입장 실패 처리: 이벤트 발생, 쿨타임 없이 잠금 해제, 유령 방일 가능성이 높으므로 목록 새로고침 </summary>
+        private void FailJoin(string reasonKey, RoomEnter? reason)
+        {
+            OnJoinFailedToLobby?.Invoke(this, new OnLobbyJoinFailedEventArgs(reasonKey, reason));
 
             isJoiningLobby = false;
             RefreshLobbyList();
         }
+
+        /// <summary> Steam 입장 결과를 사유 키로 바꿉니다. 자주 나오는 경우만 따로 나누고 나머지는 공통 실패 키 </summary>
+        private static string ToJoinFailedKey(RoomEnter result) => result switch
+        {
+            RoomEnter.DoesntExist => SystemKeys.RoomNotFound,
+            RoomEnter.Full => SystemKeys.RoomFull,
+            _ => SystemKeys.LobbyJoinFailed,
+        };
 
         /// <summary> Steam에 들어가 있지만 JoinedLobby로 기록되지 않은 로비가 있으면 나갑니다. (유령 로비 방지) </summary>
         private void LeaveIfNotRecorded(Lobby? lobby)

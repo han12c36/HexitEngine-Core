@@ -37,7 +37,8 @@ namespace HexitEngine
         //UnityEngine.Object context = null
         /// <summary> 'UNITY_EDITOR' or 'DEVELOPMENT_BUILD'인 경우에만 컴파일에 포함됩니다. </summary>
         [HideInCallstack]
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        //[Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void Log(object message, LogType type = LogType.Default, [CallerFilePath] string path = "")
         {
             if (_config == null) Initialize();
@@ -54,14 +55,16 @@ namespace HexitEngine
         }
 
         [HideInCallstack]
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        //[Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void LogError(object message, [CallerFilePath] string path = "")
         {
             Log(message, LogType.Error, path);
         }
 
         [HideInCallstack]
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        //[Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void LogWarn(object message, [CallerFilePath] string path = "")
         {
             Log(message, LogType.Warn, path);

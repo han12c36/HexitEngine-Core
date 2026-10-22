@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_pt-BR
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: pt-BR
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: "A partida j\xE1 come\xE7ou."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: "N\xE3o foi poss\xEDvel iniciar o host."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: "N\xE3o foi poss\xEDvel iniciar o cliente."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: Desconectado do servidor.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "A conex\xE3o com o servidor expirou."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: "Voc\xEA j\xE1 est\xE1 entrando em uma sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: "\xC9 necess\xE1rio fazer login na Steam."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: "N\xE3o foi poss\xEDvel criar a sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: "Sala inv\xE1lida."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: "C\xF3digo inv\xE1lido."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: "N\xE3o h\xE1 salas dispon\xEDveis."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: "A sala n\xE3o existe mais."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: "A sala est\xE1 cheia."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: "N\xE3o foi poss\xEDvel entrar na sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: "A sess\xE3o anterior ainda n\xE3o terminou."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: "N\xE3o foi poss\xEDvel carregar a cena Ready."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: "A cria\xE7\xE3o da sala foi cancelada."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: A entrada foi cancelada.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: "A entrada r\xE1pida foi cancelada."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: Falha ao criar a sala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: Falha ao entrar na sala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: "Falha na entrada r\xE1pida"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: Falha ao conectar ao servidor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: Desconectado da sala.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: "Voc\xEA foi expulso da sala."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: "O anfitri\xE3o saiu e a sala foi fechada."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: '{0} entrou.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: '{0} saiu.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: Tem certeza de que deseja sair?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Se o anfitri\xE3o sair, a sala ser\xE1 fechada para todos. Sair mesmo assim?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Netcode.Transports.Facepunch;
@@ -52,15 +53,14 @@ namespace HexitEngine
         public ulong ServerClientId => NetworkManager.ServerClientId;
         public ulong LocalClientId => NetworkManager.Singleton.LocalClientId;
 
-        public bool GameStarted
-        {
-            get
-            {
-                if (!LobbyService.Singleton.JoinedLobby.HasValue) return false;
+        /// <summary> 게임 진행 중 여부를 알려주는 함수. HEXITEngine이 초기화 시 연결합니다. (LobbyService를 직접 참조하지 않기 위함) </summary>
+        private Func<bool> gameStartedResolver;
 
-                return LobbyService.Singleton.JoinedLobby.Value.GetData("IsLocked") == "true";
-            }
-        }
+        /// <summary> 게임 진행 중 여부. 연결된 판단 함수가 없으면 false </summary>
+        public bool GameStarted => gameStartedResolver != null && gameStartedResolver();
+
+        /// <summary> 게임 진행 중 여부 판단 함수를 연결합니다. (HEXITEngine 전용) </summary>
+        public void SetGameStartedResolver(Func<bool> resolver) => gameStartedResolver = resolver;
 
         protected override UniTask OnInitializeAsync(CancellationToken ct)
         {
@@ -81,7 +81,8 @@ namespace HexitEngine
             resp.Approved = !GameStarted;
             if (!resp.Approved)
             {
-                resp.Reason = LocalizationService.Singleton.GetLocalizedString("UI_Table", "UI_GameAlreadyStarted");
+                // 번역하지 않은 사유 키를 보냄. 받은 클라이언트의 HEXITEngine이 번역합니다.
+                resp.Reason = SystemKeys.GameAlreadyStarted;
             }
 
             resp.CreatePlayerObject = false;
@@ -93,6 +94,9 @@ namespace HexitEngine
             if (!result.LobbyData.HasValue)
             {
                 Dev.LogError("유효하지 않은 로비 데이터로 Host 시작 시도");
+
+                // false를 반환하는 모든 경로에서 OnDisconnected가 발생하도록 (UI가 실패를 알 수 있게)
+                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = SystemKeys.HostStartFailed });
                 return false;
             }
 
@@ -110,11 +114,11 @@ namespace HexitEngine
 
             if (!startHostResult)
             {
-                string failReason = string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason)
-                    ? LocalizationService.Singleton.GetLocalizedString("UI_Table", "UI_HostStartFailed")
+                string failReasonKey = string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason)
+                    ? SystemKeys.HostStartFailed
                     : NetworkManager.Singleton.DisconnectReason;
 
-                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reason = failReason });
+                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = failReasonKey });
 
                 return false;
             }
@@ -139,6 +143,9 @@ namespace HexitEngine
             if (!result.LobbyData.HasValue)
             {
                 Dev.LogError("유효하지 않은 로비 데이터로 Client 시작 시도");
+
+                // false를 반환하는 모든 경로에서 OnDisconnected가 발생하도록 (UI가 실패를 알 수 있게)
+                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = SystemKeys.ClientStartFailed });
                 return false;
             }
 
@@ -158,11 +165,11 @@ namespace HexitEngine
 
             if (!startClientResult)
             {
-                string failReason = string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason)
-                    ? LocalizationService.Singleton.GetLocalizedString("UI_Table", "UI_ClientStartFailed")
+                string failReasonKey = string.IsNullOrEmpty(NetworkManager.Singleton.DisconnectReason)
+                    ? SystemKeys.ClientStartFailed
                     : NetworkManager.Singleton.DisconnectReason;
 
-                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reason = failReason });
+                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = failReasonKey });
 
                 return false;
             }
@@ -183,8 +190,8 @@ namespace HexitEngine
         {
             if (GameStarted)
             {
-                // 틈새를 뚫고 들어온 유저이므로 명단에 넣지 않고 즉시 연결을 강제 종료시킴
-                NetworkManager.Singleton.DisconnectClient(clientId);
+                // 틈새를 뚫고 들어온 유저이므로 명단에 넣지 않고 즉시 연결을 강제 종료시킴 (사유 키는 받은 쪽 HEXITEngine이 번역)
+                NetworkManager.Singleton.DisconnectClient(clientId, SystemKeys.GameAlreadyStarted);
                 return;
             }
 
@@ -245,7 +252,7 @@ namespace HexitEngine
             {
                 ResetData();
 
-                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reason = NetworkManager.Singleton.DisconnectReason });
+                OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = NetworkManager.Singleton.DisconnectReason });
 
                 return;
             }
@@ -278,17 +285,14 @@ namespace HexitEngine
         {
             ResetData();
 
-            string failReason = NetworkManager.Singleton.DisconnectReason;
+            string failReasonKey = NetworkManager.Singleton.DisconnectReason;
 
-            if (string.IsNullOrEmpty(failReason))
+            if (string.IsNullOrEmpty(failReasonKey))
             {
-                if (GameStarted)
-                    failReason = LocalizationService.Singleton.GetLocalizedString("UI_Table", "UI_DisconnectedFromServer");
-                else
-                    failReason = LocalizationService.Singleton.GetLocalizedString("UI_Table", "UI_ServerConnectionTimeout");
+                failReasonKey = GameStarted ? SystemKeys.DisconnectedFromServer : SystemKeys.ServerConnectionTimeout;
             }
 
-            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reason = failReason });
+            OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs { reasonKey = failReasonKey });
         }
 
         public void ShutdownNetwork()
@@ -369,16 +373,13 @@ namespace HexitEngine
             });
         }
 
+        /// <summary> [서버만] 대상의 슬롯을 비우고 연결을 끊습니다. 로비 쪽 강퇴 기록은 HEXITEngine이 처리합니다. </summary>
         public void KickPlayer(ulong targetClientId)
         {
             if (!IsServer || targetClientId == ServerClientId) return;
 
-            if (TryGetPlayerDataByClientId(targetClientId, out var playerData))
+            if (TryGetPlayerDataByClientId(targetClientId, out _))
             {
-                string targetSteamId = playerData.AuthId;
-
-                LobbyService.Singleton.KickPlayerFromLobby(targetSteamId);
-
                 for (int i = 0; i < playerDatas.Count; i++)
                 {
                     if (playerDatas[i].clientId == targetClientId)
@@ -389,6 +390,36 @@ namespace HexitEngine
                 }
 
                 NetworkManager.Singleton.DisconnectClient(targetClientId);
+            }
+        }
+
+        /// <summary>
+        /// [서버만] 대상의 연결만 끊습니다. 슬롯은 건드리지 않으므로 일반 이탈과 같은 경로(Host_OnClientDisconnected)로 처리됩니다.
+        /// (Ready에서는 슬롯 제거, 게임 중에는 끊김 표시)
+        /// </summary>
+        public void DisconnectClient_OnlyServer(ulong clientId)
+        {
+            if (!IsServer || clientId == ServerClientId) return;
+            if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId)) return;
+
+            NetworkManager.Singleton.DisconnectClient(clientId);
+        }
+
+        /// <summary>
+        /// [서버만] 호스트를 제외한 모든 클라이언트의 연결을 사유와 함께 끊습니다. (방장 퇴장 등)
+        /// NGO가 사유 메시지를 먼저 보낸 뒤 연결을 닫으므로, 받은 쪽은 NetworkManager.DisconnectReason으로 사유를 받습니다.
+        /// </summary>
+        public void DisconnectAllClients_OnlyServer(string reasonKey)
+        {
+            if (!IsServer || NetworkManager.Singleton == null) return;
+
+            // 끊는 동안 목록이 바뀌므로 복사본으로 순회
+            var clientIds = new List<ulong>(NetworkManager.Singleton.ConnectedClientsIds);
+
+            foreach (ulong clientId in clientIds)
+            {
+                if (clientId == ServerClientId) continue;
+                NetworkManager.Singleton.DisconnectClient(clientId, reasonKey);
             }
         }
 

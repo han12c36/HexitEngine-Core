@@ -3,12 +3,6 @@ using UnityEngine;
 
 namespace HexitEngine
 {
-    /// <summary>
-    /// [서버] Game 씬에 배치. OnPlayerReadyToSpawn을 받아 게임 플레이어(ClientGamePlayer)를 생성하고 해당 플레이어 소유로 스폰합니다.
-    /// - 스폰 시점(접속 + 씬 준비 + PlayerData)은 MultiplayerService가 판단합니다.
-    /// - 위치는 playerId 번째 스폰 지점을 사용합니다. (지점이 부족하면 순환, 없으면 이 오브젝트 위치)
-    /// - 주인이 나가면 게임 플레이어도 함께 사라집니다. (재접속 없음)
-    /// </summary>
     public class GamePlayerSpawner : MonoBehaviour
     {
         [Tooltip("ClientGamePlayer가 붙은 플레이어 프리팹")]

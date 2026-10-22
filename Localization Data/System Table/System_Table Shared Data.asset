@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: System_Table Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: System_Table
+  m_TableCollectionNameGuidString: ce217d52daf02a3419a26148bc3bfc3a
+  m_Entries:
+  - m_Id: 1074348032
+    m_Key: SYS_GameAlreadyStarted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Key: SYS_HostStartFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Key: SYS_ClientStartFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Key: SYS_DisconnectedFromServer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Key: SYS_ServerConnectionTimeout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Key: SYS_AlreadyJoiningLobby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Key: SYS_SteamLoginRequired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Key: SYS_LobbyCreateFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Key: SYS_InvalidLobbyId
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Key: SYS_InvalidJoinCode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Key: SYS_NoAvailableRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Key: SYS_RoomNotFound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Key: SYS_RoomFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Key: SYS_LobbyJoinFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Key: SYS_PreviousSessionNotEnded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Key: SYS_ReadySceneLoadFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Key: SYS_CreateCanceled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Key: SYS_JoinCanceled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Key: SYS_QuickJoinCanceled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Key: SYS_Title_CreateRoomFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Key: SYS_Title_JoinRoomFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Key: SYS_Title_QuickJoinFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Key: SYS_Title_ConnectFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Key: SYS_Title_Disconnected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Key: SYS_Title_Kicked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Key: SYS_HostLeftSession
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Key: SYS_Chat_PlayerJoined
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Key: SYS_Chat_PlayerLeft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Key: SYS_Confirm_LeaveGame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Key: SYS_Confirm_LeaveGameHost
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 1922208490657677541
+  references:
+    version: 2
+    RefIds:
+    - rid: 1922208490657677541
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792568518048

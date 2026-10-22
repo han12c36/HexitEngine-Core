@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: The game has already started.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: Failed to start the host.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: Failed to start the client.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: Disconnected from the server.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: Connection to the server timed out.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: Already joining a room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: Steam login is required.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: Could not create the room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: Invalid room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: Invalid code.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: There are no rooms to join.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: The room no longer exists.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: The room is full.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: Could not join the room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: The previous session has not ended yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: Failed to load the Ready scene.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: Room creation was canceled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: Joining was canceled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: Quick join was canceled.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: Failed to create room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: Failed to join room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: Quick join failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: Failed to connect to server.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: Disconnected from the room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: You were kicked from the room.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: The host left, so the room was closed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: '{0} joined.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: '{0} left.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: Are you sure you want to leave?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: You are the host. Leaving will close the room for everyone. Leave anyway?
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

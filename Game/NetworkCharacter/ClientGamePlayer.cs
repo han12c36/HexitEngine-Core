@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -17,11 +18,19 @@ namespace HexitEngine
         /// <summary> [모두] 이 컴퓨터의 내 게임 플레이어. 아직 준비 전이면 null </summary>
         public static ClientGamePlayer LocalClientGamePlayer { get; private set; }
 
+        /// <summary> [모두] 어떤 게임 플레이어든 준비됨 (스폰 + PlayerData 보장, 각 Ready 훅 이후). GameManagerBase가 중계합니다. </summary>
+        public static event Action<ClientGamePlayer> OnAnyGamePlayerReady;
+
+        /// <summary> [모두] 어떤 게임 플레이어든 사라지기 직전 (각 Despawn 훅 이후, 목록에서 빠지기 전). GameManagerBase가 중계합니다. </summary>
+        public static event Action<ClientGamePlayer> OnAnyGamePlayerDespawned;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatic()
         {
             clientGamePlayers.Clear();
             LocalClientGamePlayer = null;
+            OnAnyGamePlayerReady = null;
+            OnAnyGamePlayerDespawned = null;
         }
 
         /// <summary> [모두] clientId로 ClientGamePlayer를 찾습니다. </summary>
@@ -108,7 +117,7 @@ namespace HexitEngine
         /// <summary> [서버만] 
         /// PlayerData를 넣고 해당 플레이어 소유로 스폰.
         /// 주인이 나가면 게임 플레이어도 함께 사라짐.
-        /// GamePlayerSpawner가 호출합니다.
+        /// GameManagerBase가 호출합니다.
         /// </summary>
         public void SpawnGamePlayer_OnlyServer(PlayerData playerData)
         {
@@ -151,6 +160,8 @@ namespace HexitEngine
             if (IsServer) OnServerGamePlayerDespawned();
             OnGamePlayerDespawned();
 
+            OnAnyGamePlayerDespawned?.Invoke(this);
+
             Unregister(this);
             IsPlayerDataReady = false;
         }
@@ -175,10 +186,12 @@ namespace HexitEngine
 
             // 훅 안에서 ClientGamePlayers / LocalClientGamePlayer로 자기 자신도 찾을 수 있도록 먼저 등록
             Register(this);
-            
+
             OnGamePlayerReady();
             if (IsServer) OnServerGamePlayerReady();
             if (IsLocal) OnLocalGamePlayerReady();
+
+            OnAnyGamePlayerReady?.Invoke(this);
         }
 
         #region Hooks

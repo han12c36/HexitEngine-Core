@@ -12,9 +12,9 @@ namespace HexitEngine
 
         /// <summary> 풀 키(해시) → 프리팹 이름. 해시 충돌 검사용 </summary>
         private readonly Dictionary<int, string> poolNames = new();
-
-        /// <summary> 씬 핸들 → 그 씬이 소유한 풀 키 목록. 씬마다 따로 관리하므로 다른 씬의 언로드에 영향받지 않습니다. </summary>
-        private readonly Dictionary<int, List<int>> scenePoolKeys = new();
+        
+        //private readonly Dictionary<int, List<int>> scenePoolKeys = new();
+        private readonly Dictionary<SceneHandle, List<int>> scenePoolKeys = new();
 
         #region Lifecycle
 

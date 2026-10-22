@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_de
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: Das Spiel hat bereits begonnen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: Der Host konnte nicht gestartet werden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: Der Client konnte nicht gestartet werden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: Die Verbindung zum Server wurde getrennt.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "Zeit\xFCberschreitung bei der Verbindung zum Server."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: Du trittst bereits einem Raum bei.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: Steam-Anmeldung erforderlich.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: Der Raum konnte nicht erstellt werden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: "Ung\xFCltiger Raum."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: "Ung\xFCltiger Code."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: "Es gibt keine R\xE4ume zum Beitreten."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: Der Raum existiert nicht mehr.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: Der Raum ist voll.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: Dem Raum konnte nicht beigetreten werden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: Die vorherige Sitzung ist noch nicht beendet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: Die Ready-Szene konnte nicht geladen werden.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: Raumerstellung abgebrochen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: Beitritt abgebrochen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: Schnellbeitritt abgebrochen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: Raum konnte nicht erstellt werden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: Beitritt fehlgeschlagen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: Schnellbeitritt fehlgeschlagen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: Verbindung zum Server fehlgeschlagen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: Die Verbindung zum Raum wurde getrennt.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: Du wurdest aus dem Raum geworfen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: Der Host hat den Raum verlassen. Der Raum wurde geschlossen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: '{0} ist beigetreten.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: '{0} hat den Raum verlassen.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: "M\xF6chtest du wirklich gehen?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Wenn der Host geht, wird der Raum f\xFCr alle geschlossen. Trotzdem gehen?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

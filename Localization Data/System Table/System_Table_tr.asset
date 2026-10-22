@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_tr
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: tr
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: "Oyun zaten ba\u015Flad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: "Host ba\u015Flat\u0131lamad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: "\u0130stemci ba\u015Flat\u0131lamad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: "Sunucuyla ba\u011Flant\u0131 kesildi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "Sunucu ba\u011Flant\u0131s\u0131 zaman a\u015F\u0131m\u0131na u\u011Frad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: "Zaten bir odaya kat\u0131l\u0131yorsunuz."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: "Steam giri\u015Fi gerekli."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: "Oda olu\u015Fturulamad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: "Ge\xE7ersiz oda."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: "Ge\xE7ersiz kod."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: "Kat\u0131l\u0131nabilecek oda yok."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: "Oda art\u0131k mevcut de\u011Fil."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: Oda dolu.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: "Odaya kat\u0131l\u0131namad\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: "\xD6nceki oturum hen\xFCz sona ermedi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: "Ready sahnesi y\xFCklenemedi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: "Oda olu\u015Fturma iptal edildi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: "Kat\u0131lma iptal edildi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: "H\u0131zl\u0131 kat\u0131lma iptal edildi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: "Oda olu\u015Fturulamad\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: "Odaya kat\u0131l\u0131namad\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: "H\u0131zl\u0131 kat\u0131lma ba\u015Far\u0131s\u0131z"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: "Sunucuya ba\u011Flan\u0131lamad\u0131"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: "Odayla ba\u011Flant\u0131 kesildi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: "Odadan at\u0131ld\u0131n\u0131z."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: "Oda sahibi ayr\u0131ld\u0131, oda kapat\u0131ld\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: "{0} kat\u0131ld\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: "{0} ayr\u0131ld\u0131."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: "\xC7\u0131kmak istedi\u011Finizden emin misiniz?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Oda sahibi \xE7\u0131karsa oda herkes i\xE7in kapan\u0131r. Yine de \xE7\u0131k\u0131ls\u0131n m\u0131?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

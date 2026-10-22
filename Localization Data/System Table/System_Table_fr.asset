@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: System_Table_fr
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: ce217d52daf02a3419a26148bc3bfc3a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1074348032
+    m_Localized: "La partie a d\xE9j\xE0 commenc\xE9."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845504
+    m_Localized: "Impossible de d\xE9marrer l'h\xF4te."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845505
+    m_Localized: "Impossible de d\xE9marrer le client."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1149845506
+    m_Localized: "D\xE9connect\xE9 du serveur."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039808
+    m_Localized: "La connexion au serveur a expir\xE9."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039809
+    m_Localized: "Connexion \xE0 un salon d\xE9j\xE0 en cours."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039810
+    m_Localized: "Connexion \xE0 Steam requise."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039811
+    m_Localized: "Impossible de cr\xE9er le salon."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039812
+    m_Localized: Salon invalide.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039813
+    m_Localized: Code invalide.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039814
+    m_Localized: Aucun salon disponible.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039815
+    m_Localized: Ce salon n'existe plus.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039816
+    m_Localized: Le salon est complet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039817
+    m_Localized: Impossible de rejoindre le salon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039818
+    m_Localized: "La session pr\xE9c\xE9dente n'est pas encore termin\xE9e."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039819
+    m_Localized: "Impossible de charger la sc\xE8ne Ready."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039820
+    m_Localized: "Cr\xE9ation du salon annul\xE9e."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039821
+    m_Localized: "Connexion annul\xE9e."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039822
+    m_Localized: "Connexion rapide annul\xE9e."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039823
+    m_Localized: "\xC9chec de la cr\xE9ation du salon"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039824
+    m_Localized: "\xC9chec de la connexion au salon"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039825
+    m_Localized: "\xC9chec de la connexion rapide"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039826
+    m_Localized: "\xC9chec de la connexion au serveur"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039827
+    m_Localized: "D\xE9connect\xE9 du salon."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1154039828
+    m_Localized: "Vous avez \xE9t\xE9 expuls\xE9 du salon."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73430704144384
+    m_Localized: "L'h\xF4te est parti, le salon a \xE9t\xE9 ferm\xE9."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73441592557568
+    m_Localized: '{0} a rejoint.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73463507795968
+    m_Localized: '{0} est parti.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73476958928896
+    m_Localized: Voulez-vous vraiment quitter ?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73487197224960
+    m_Localized: "Si l'h\xF4te quitte, le salon sera ferm\xE9 pour tout le monde. Quitter quand m\xEAme ?"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
