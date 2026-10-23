@@ -144,8 +144,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Voice State...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3e443b2b0e7af804ebaed42f3f261612, type: 2}
+  m_sharedMaterial: {fileID: 3024273854628633742, guid: 3e443b2b0e7af804ebaed42f3f261612, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -412,9 +412,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d64ba881462a3ae4788634f54b816dbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexitEngine.Sample.VoiceRosterUI
+  voiceStateText: {fileID: 4271749912382172032}
   listContent: {fileID: 5274059794366577594}
   itemPrefab: {fileID: 1429110973786340089, guid: 4dc252d41a78dfe4dab8583d521ce82b, type: 3}
-  voiceStateText: {fileID: 4271749912382172032}
 --- !u!1 &4638424151299150897
 GameObject:
   m_ObjectHideFlags: 0

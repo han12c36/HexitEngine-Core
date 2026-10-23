@@ -121,7 +121,7 @@ namespace HexitEngine
         // ==============================================
         private void ChangeAllFontsInScene()
         {
-            TMP_Text[] allTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            TMP_Text[] allTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);
             int count = 0;
             foreach (var t in allTexts)
             {
@@ -134,7 +134,7 @@ namespace HexitEngine
 
         private void ChangeAllColorsInScene()
         {
-            TMP_Text[] allTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            TMP_Text[] allTexts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);
             int count = 0;
             foreach (var t in allTexts)
             {
@@ -147,7 +147,7 @@ namespace HexitEngine
 
         private void ChangeAllOutlinesInScene()
         {
-            UnityEngine.UI.Outline[] allOutlines = Object.FindObjectsByType<UnityEngine.UI.Outline>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            UnityEngine.UI.Outline[] allOutlines = Object.FindObjectsByType<UnityEngine.UI.Outline>(FindObjectsInactive.Include);
             int count = 0;
             foreach (var o in allOutlines)
             {
