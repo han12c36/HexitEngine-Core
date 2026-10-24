@@ -27,3 +27,9 @@ MonoBehaviour:
   - HexitEngine.VoiceService
   - HexitEngine.CanvasService
   ForceSceneRouting: 1
+  showLoadingOnBoot: 0
+  defaultLoadingCanvas: {fileID: 262511535737870507, guid: 4aa7fa3f5b26e3f4480ba1c72f9c6dbd, type: 3}
+  mainMenuLoadingCanvas: {fileID: 0}
+  readyLoadingCanvas: {fileID: 0}
+  gameLoadingCanvas: {fileID: 0}
+  loadingTimeoutSeconds: 30
