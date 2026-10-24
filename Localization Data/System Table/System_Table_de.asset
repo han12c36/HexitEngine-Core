@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: "Wenn der Host geht, wird der Raum f\xFCr alle geschlossen. Trotzdem gehen?"
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: Raum wird erstellt...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: Raum wird betreten...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: Verbindung wird hergestellt...
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

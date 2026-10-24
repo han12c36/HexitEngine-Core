@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: You are the host. Leaving will close the room for everyone. Leave anyway?
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: Creating room...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: Joining room...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: Connecting...
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

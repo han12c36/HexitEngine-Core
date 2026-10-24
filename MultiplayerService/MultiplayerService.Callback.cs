@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace HexitEngine
 {
@@ -35,7 +36,11 @@ namespace HexitEngine
         /// <summary> 호스트가 타인의 서버 연결 끊킴을 인지 시 호출 </summary>
         public EventHandler<OnClientEventArgs> OnHostDisconnected { get; set; }
 
+        /// <summary> [나만] 내 컴퓨터에서 네트워크 씬 로드 시작 (클라이언트의 첫 접속은 씬 동기화 시작). 로딩 화면용 </summary>
+        public EventHandler<OnSceneLoadEventArgs> OnLocalSceneLoadStarted { get; set; }
 
+        /// <summary> [나만] 내 컴퓨터에서 네트워크 씬 로드 완료 (클라이언트의 첫 접속은 씬 동기화 완료). 로딩 화면용 </summary>
+        public EventHandler<OnSceneLoadEventArgs> OnLocalSceneLoadCompleted { get; set; }
 
 
 
@@ -73,6 +78,18 @@ namespace HexitEngine
         {
             public string sceneName;
             public PlayerData playerData;
+        }
+
+        public class OnSceneLoadEventArgs : EventArgs
+        {
+            /// <summary> 도착 씬 이름. 씬 동기화(참가자의 첫 접속)에서는 비어 있을 수 있습니다. </summary>
+            public string sceneName;
+
+            /// <summary> 참가자의 첫 접속 씬 동기화인지 </summary>
+            public bool isSynchronize;
+
+            /// <summary> 진행률을 읽을 씬 로드 작업. 씬 동기화, 완료 이벤트에서는 null </summary>
+            public AsyncOperation asyncOperation;
         }
     }
 }

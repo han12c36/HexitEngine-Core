@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: "Se l'host esce, la stanza verr\xE0 chiusa per tutti. Uscire comunque?"
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: Creazione della stanza...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: Accesso alla stanza...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: Connessione...
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

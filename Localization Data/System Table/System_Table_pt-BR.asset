@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: "Se o anfitri\xE3o sair, a sala ser\xE1 fechada para todos. Sair mesmo assim?"
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: Criando sala...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: Entrando na sala...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: Conectando...
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -56,11 +56,26 @@ namespace HexitEngine
         /// <summary> 게임 진행 중 여부를 알려주는 함수. HEXITEngine이 초기화 시 연결합니다. (LobbyService를 직접 참조하지 않기 위함) </summary>
         private Func<bool> gameStartedResolver;
 
-        /// <summary> 게임 진행 중 여부. 연결된 판단 함수가 없으면 false </summary>
+        /// <summary> 세션 잠김 여부를 알려주는 함수. HEXITEngine이 초기화 시 연결합니다. </summary>
+        private Func<bool> sessionLockedResolver;
+
+        /// <summary>
+        /// 게임 진행 중 여부 (Game 씬 로드 시작 ~ Ready 복귀). 연결된 판단 함수가 없으면 false
+        /// 이탈자 처리에 사용: 게임 중이면 슬롯을 남겨 두고(끊김 표시), 아니면 슬롯을 제거합니다.
+        /// </summary>
         public bool GameStarted => gameStartedResolver != null && gameStartedResolver();
+
+        /// <summary>
+        /// 세션 잠김 여부 (방장 Play ~ Ready 복귀, 시작 준비 단계 포함). 연결된 판단 함수가 없으면 false
+        /// 새 접속 거절에 사용합니다.
+        /// </summary>
+        public bool SessionLocked => sessionLockedResolver != null && sessionLockedResolver();
 
         /// <summary> 게임 진행 중 여부 판단 함수를 연결합니다. (HEXITEngine 전용) </summary>
         public void SetGameStartedResolver(Func<bool> resolver) => gameStartedResolver = resolver;
+
+        /// <summary> 세션 잠김 여부 판단 함수를 연결합니다. (HEXITEngine 전용) </summary>
+        public void SetSessionLockedResolver(Func<bool> resolver) => sessionLockedResolver = resolver;
 
         protected override UniTask OnInitializeAsync(CancellationToken ct)
         {
@@ -78,7 +93,8 @@ namespace HexitEngine
 
             if (payload.authId != "None") AddPendingPayloadData(req.ClientNetworkId, payload);
 
-            resp.Approved = !GameStarted;
+            // 시작 준비 단계(세션 잠김)부터 새 접속을 거절
+            resp.Approved = !SessionLocked;
             if (!resp.Approved)
             {
                 // 번역하지 않은 사유 키를 보냄. 받은 클라이언트의 HEXITEngine이 번역합니다.
@@ -126,6 +142,8 @@ namespace HexitEngine
             NetworkManager.Singleton.SceneManager.OnSceneEvent -= Host_OnSceneEvent;
             NetworkManager.Singleton.SceneManager.OnSceneEvent += Host_OnSceneEvent;
 
+            SubscribeLocalSceneEvent();
+
             return true;
         }
 
@@ -135,7 +153,10 @@ namespace HexitEngine
 
             NetworkManager.Singleton.OnClientConnectedCallback -= Host_OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback -= Host_OnClientDisconnected;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= Host_OnSceneEvent;
+
+            if (NetworkManager.Singleton.SceneManager != null) NetworkManager.Singleton.SceneManager.OnSceneEvent -= Host_OnSceneEvent;
+
+            UnsubscribeLocalSceneEvent();
         }
 
         public bool StartClient(LobbyResult result)
@@ -174,6 +195,9 @@ namespace HexitEngine
                 return false;
             }
 
+            // 접속 후 서버 씬으로 동기화될 때 로딩 화면을 띄우기 위함
+            SubscribeLocalSceneEvent();
+
             return true;
         }
 
@@ -183,12 +207,14 @@ namespace HexitEngine
 
             NetworkManager.Singleton.OnClientConnectedCallback -= Client_OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback -= Client_OnClientDisconnected;
+
+            UnsubscribeLocalSceneEvent();
         }
 
         /// <summary> 본인 포함 타인이 접속시 호스트에서만 계속 호출  </summary>
         private void Host_OnClientConnected(ulong clientId)
         {
-            if (GameStarted)
+            if (SessionLocked)
             {
                 // 틈새를 뚫고 들어온 유저이므로 명단에 넣지 않고 즉시 연결을 강제 종료시킴 (사유 키는 받은 쪽 HEXITEngine이 번역)
                 NetworkManager.Singleton.DisconnectClient(clientId, SystemKeys.GameAlreadyStarted);
@@ -299,9 +325,10 @@ namespace HexitEngine
         {
             bool isHost = NetworkManager.Singleton.IsHost;
 
-            NetworkManager.Singleton.Shutdown();
-
+            // 네트워크가 살아 있을 때 먼저 비움 (종료 중에 NetworkList를 수정하면 NGO가 경고를 냄)
             ResetData();
+
+            NetworkManager.Singleton.Shutdown();
 
             if (isHost) StopHost();
             else StopClient();
@@ -341,6 +368,50 @@ namespace HexitEngine
             if (e.SceneEventType == SceneEventType.LoadComplete || e.SceneEventType == SceneEventType.SynchronizeComplete)
             {
                 SetClientReadyAndTrySpawn(e.ClientId, e.SceneName);
+            }
+        }
+
+        /// <summary> [나만] 내 컴퓨터의 씬 로드 이벤트 구독 (호스트/클라이언트 공통) </summary>
+        private void SubscribeLocalSceneEvent()
+        {
+            var sceneManager = NetworkManager.Singleton.SceneManager;
+            if (sceneManager == null) return;
+
+            sceneManager.OnSceneEvent -= Local_OnSceneEvent;
+            sceneManager.OnSceneEvent += Local_OnSceneEvent;
+        }
+
+        private void UnsubscribeLocalSceneEvent()
+        {
+            var sceneManager = NetworkManager.Singleton.SceneManager;
+            if (sceneManager != null) sceneManager.OnSceneEvent -= Local_OnSceneEvent;
+        }
+
+        /// <summary>
+        /// [나만] 내 컴퓨터의 씬 로드 시작/완료만 골라서 알립니다. (로딩 화면용)
+        /// - 서버(호스트): 이벤트가 모든 클라이언트 것까지 오므로 서버 자신(ServerClientId) 것만 사용
+        /// - 클라이언트: 자기 것만 옴. 처음 접속할 때는 Load 대신 Synchronize(서버 씬으로 동기화)가 옴
+        /// </summary>
+        private void Local_OnSceneEvent(SceneEvent e)
+        {
+            if (NetworkManager.Singleton.IsServer && e.ClientId != ServerClientId) return;
+
+            switch (e.SceneEventType)
+            {
+                case SceneEventType.Load:
+                case SceneEventType.Synchronize:
+                    OnLocalSceneLoadStarted?.Invoke(this, new OnSceneLoadEventArgs
+                    {
+                        sceneName = e.SceneName,
+                        isSynchronize = e.SceneEventType == SceneEventType.Synchronize,
+                        asyncOperation = e.AsyncOperation,
+                    });
+                    break;
+
+                case SceneEventType.LoadComplete:
+                case SceneEventType.SynchronizeComplete:
+                    OnLocalSceneLoadCompleted?.Invoke(this, new OnSceneLoadEventArgs { sceneName = e.SceneName });
+                    break;
             }
         }
 

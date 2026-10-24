@@ -135,6 +135,18 @@ MonoBehaviour:
     m_Key: SYS_Confirm_LeaveGameHost
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Key: SYS_Progress_CreatingRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Key: SYS_Progress_JoiningRoom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Key: SYS_Progress_Connecting
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: "Je\u015Bli gospodarz wyjdzie, pok\xF3j zostanie zamkni\u0119ty dla wszystkich. Wyj\u015B\u0107 mimo to?"
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: Tworzenie pokoju...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: "Do\u0142\u0105czanie do pokoju..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: "\u0141\u0105czenie..."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

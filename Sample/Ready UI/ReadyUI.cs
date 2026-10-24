@@ -10,6 +10,8 @@ namespace HexitEngine.Sample
 {
     public class ReadyUI : MonoBehaviour
     {
+        private const string STARTING_TEXT = "Starting game...";
+
         private readonly List<ReadyListItem> items = new();
 
         [Header("Room Info")]
@@ -30,7 +32,7 @@ namespace HexitEngine.Sample
         [SerializeField] private Button leaveButton;
 
         private HEXITEngine hexit;
-        private ReadyManager readyManager;
+        private ReadyManagerBase readyManagerBase;
 
         private bool isLeaving;
 
@@ -46,18 +48,20 @@ namespace HexitEngine.Sample
         private void Start()
         {
             hexit = HEXITEngine.Singleton;
-            readyManager = ReadyManager.Singleton;
+            readyManagerBase = ReadyManagerBase.Singleton;
 
             if (hexit == null) Dev.LogError("HEXITEngine이 없습니다. 부트스트랩을 거쳐서 실행하세요.");
-            if (readyManager == null) Dev.LogError("ReadyManager가 Ready 씬에 없습니다.");
+            if (readyManagerBase == null) Dev.LogError("ReadyManager가 Ready 씬에 없습니다.");
 
             if (hexit != null) hexit.OnPlayerDatasChanged += HandlePlayerDatasChanged;
 
-            if (readyManager != null)
+            if (readyManagerBase != null)
             {
-                readyManager.OnPlayerReadyStatusChanged += HandleReadyChanged;
-                readyManager.OnAllPlayersReady += HandleReadyChanged;
-                readyManager.OnAllPlayersReadyCanceled += HandleReadyChanged;
+                readyManagerBase.OnPlayerReadyStatusChanged += HandleReadyChanged;
+                readyManagerBase.OnAllPlayersReady += HandleReadyChanged;
+                readyManagerBase.OnAllPlayersReadyCanceled += HandleReadyChanged;
+                readyManagerBase.OnStartingBegan += HandleReadyChanged;
+                readyManagerBase.OnStartingCanceled += HandleReadyChanged;
             }
 
             RefreshRoomInfo();
@@ -74,29 +78,31 @@ namespace HexitEngine.Sample
 
             if (hexit != null) hexit.OnPlayerDatasChanged -= HandlePlayerDatasChanged;
 
-            if (readyManager != null)
+            if (readyManagerBase != null)
             {
-                readyManager.OnPlayerReadyStatusChanged -= HandleReadyChanged;
-                readyManager.OnAllPlayersReady -= HandleReadyChanged;
-                readyManager.OnAllPlayersReadyCanceled -= HandleReadyChanged;
+                readyManagerBase.OnPlayerReadyStatusChanged -= HandleReadyChanged;
+                readyManagerBase.OnAllPlayersReady -= HandleReadyChanged;
+                readyManagerBase.OnAllPlayersReadyCanceled -= HandleReadyChanged;
+                readyManagerBase.OnStartingBegan -= HandleReadyChanged;
+                readyManagerBase.OnStartingCanceled -= HandleReadyChanged;
             }
         }
 
         /// <summary> 내가 레디 상태를 바꿔 달라고 서버에 요청 </summary>
         public void ToggleReady()
         {
-            if (readyManager == null || isLeaving) return;
+            if (readyManagerBase == null || isLeaving) return;
 
-            readyManager.ToggleReady();
+            readyManagerBase.ToggleReady();
         }
 
         /// <summary> 호스트가 게임을 시작 </summary>
         public void Play()
         {
-            if (readyManager == null || hexit == null || !hexit.IsServer || isLeaving) return;
+            if (readyManagerBase == null || hexit == null || !hexit.IsServer || isLeaving) return;
 
-            // 시작되면 세션이 잠기므로 Play 버튼과 강퇴 버튼이 꺼지도록 다시 그림
-            if (readyManager.StartGame_OnlyServer()) Refresh();
+            // 시작 준비에 들어가면 세션이 잠기므로 Play, 레디, 강퇴 버튼이 꺼지도록 다시 그림
+            if (readyManagerBase.StartGame_OnlyServer()) Refresh();
         }
 
         /// <summary> 내가 방 초대 코드를 복사 </summary>
@@ -158,14 +164,17 @@ namespace HexitEngine.Sample
         private void Refresh()
         {
             bool isHost = hexit != null && hexit.IsServer;
-            bool isReady = readyManager != null && readyManager.IsPlayerReady(LocalClientId());
-            bool isPlayable = readyManager != null && readyManager.IsAllReady;
+            bool isReady = readyManagerBase != null && readyManagerBase.IsPlayerReady(LocalClientId());
+            bool isPlayable = readyManagerBase != null && readyManagerBase.IsAllReady;
             bool isLocked = hexit != null && hexit.IsSessionLocked;
+
+            // 시작 준비 중에는 모두 상태 변경 불가 (클라이언트는 IsSessionLocked를 모르므로 동기화된 IsStarting으로 판단)
+            bool isStarting = readyManagerBase != null && readyManagerBase.IsStarting;
 
             if (readyButton != null)
             {
                 readyButton.gameObject.SetActive(!isHost);
-                readyButton.interactable = readyManager != null && !isLeaving;
+                readyButton.interactable = readyManagerBase != null && !isStarting && !isLeaving;
             }
 
             if (readyButtonText != null) readyButtonText.text = isReady ? "Cancel" : "Ready";
@@ -173,42 +182,48 @@ namespace HexitEngine.Sample
             if (playButton != null)
             {
                 playButton.gameObject.SetActive(isHost);
-                playButton.interactable = isPlayable && !isLocked && !isLeaving;
+                playButton.interactable = isPlayable && !isLocked && !isStarting && !isLeaving;
             }
 
             if (copyCodeButton != null) copyCodeButton.interactable = !isLeaving;
             if (inviteButton != null) inviteButton.interactable = !isLeaving;
             if (leaveButton != null) leaveButton.interactable = !isLeaving;
 
-            RefreshStatus(isPlayable);
+            RefreshStatus(isPlayable, isStarting);
             RefreshList();
         }
 
-        private void RefreshStatus(bool isPlayable)
+        private void RefreshStatus(bool isPlayable, bool isStarting)
         {
-            if (statusText == null || readyManager == null) return;
+            if (statusText == null || readyManagerBase == null) return;
 
-            int playerCount = readyManager.PlayerCount;
-            int minPlayers = readyManager.MinPlayers;
+            if (isStarting)
+            {
+                statusText.text = STARTING_TEXT;
+                return;
+            }
+
+            int playerCount = readyManagerBase.PlayerCount;
+            int minPlayers = readyManagerBase.MinPlayers;
 
             if (playerCount < minPlayers) statusText.text = $"Waiting for players ({playerCount}/{minPlayers})";
-            else if (!isPlayable) statusText.text = $"Waiting for ready ({readyManager.ReadyCount}/{playerCount})";
+            else if (!isPlayable) statusText.text = $"Waiting for ready ({readyManagerBase.ReadyCount}/{playerCount})";
             else statusText.text = "Ready to play";
         }
 
         /// <summary> 레디 목록을 그립니다. 항목 오브젝트는 재사용합니다. </summary>
         private void RefreshList()
         {
-            if (readyManager == null || listContent == null || itemPrefab == null) return;
+            if (readyManagerBase == null || listContent == null || itemPrefab == null) return;
 
             int count = 0;
             ulong localClientId = LocalClientId();
             var multiplayer = MultiplayerService.Singleton;
 
-            // [서버만] 강퇴는 방장 화면에서, Play를 누르기 전까지만 가능
-            bool canKick = hexit != null && hexit.IsServer && !hexit.IsSessionLocked && !isLeaving;
+            // [서버만] 강퇴는 방장 화면에서, Play를 누르기 전까지만 가능 (시작 준비 중 불가)
+            bool canKick = hexit != null && hexit.IsServer && !hexit.IsSessionLocked && !readyManagerBase.IsStarting && !isLeaving;
 
-            foreach (var data in readyManager.ReadyDatas)
+            foreach (var data in readyManagerBase.ReadyDatas)
             {
                 if (items.Count <= count) items.Add(Instantiate(itemPrefab, listContent));
 

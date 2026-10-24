@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace HexitEngine
@@ -10,6 +11,9 @@ namespace HexitEngine
         public static string GetActiveSceneName => SceneManager.GetActiveScene().name;
 
         public static void Load(Scene targetScene) => SceneManager.LoadScene(targetScene.ToString());
+
+        /// <summary> 비동기로 씬을 로드합니다. (로딩 화면 진행률 표시용) 빌드 목록에 없는 씬이면 null </summary>
+        public static AsyncOperation LoadAsync(Scene targetScene) => SceneManager.LoadSceneAsync(targetScene.ToString());
 
         /// <summary>
         /// [서버만] Netcode의 SceneManager로 모든 클라이언트를 함께 이동시킵니다.

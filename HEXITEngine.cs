@@ -19,6 +19,7 @@ namespace HexitEngine
     /// - 모든 서비스를 참조하므로 부트스트랩 초기화 순서의 맨 마지막에 둡니다.
     /// - 콜드부트 초대(+connect_lobby)는 부트스트랩이 끝나고 첫 씬에 도착한 뒤 처리합니다.
     /// - 앱 종료 정리 순서(네트워크 → 로비 → Steam)를 지휘합니다.
+    /// - 씬 전환 로딩 화면을 관리합니다. (HEXITEngine.Loading.cs)
     /// </summary>
     public partial class HEXITEngine : LocalSingleton<HEXITEngine>
     {
@@ -57,10 +58,17 @@ namespace HexitEngine
         private bool isLeavingSession;
 
         /// <summary>
-        /// [서버만] 세션 잠금 여부. 방장이 Play를 누른 순간 true, Ready로 돌아오면 false.
+        /// [서버만] 세션 잠금 여부. 방장이 Play를 누른 순간(시작 준비 단계 진입) true, Ready로 돌아오거나 시작이 취소되면 false.
+        /// 새 접속 거절, 레디 변경 차단, 강퇴 차단에 사용합니다.
         /// Steam 로비 데이터는 반영이 늦을 수 있으므로, 접속 승인은 이 값(호스트 메모리)으로 즉시 판단합니다.
         /// </summary>
         public bool IsSessionLocked { get; private set; }
+
+        /// <summary>
+        /// [서버만] 게임 진행 중 여부. Game 씬 로드를 시작한 순간 true, Ready로 돌아오면 false.
+        /// 세션 잠김과 달리 시작 준비 단계에서는 false이므로, 그때 나간 사람은 일반 이탈(슬롯 제거)로 처리됩니다.
+        /// </summary>
+        public bool IsGameInProgress { get; private set; }
 
         #region Lifecycle
 
@@ -85,6 +93,7 @@ namespace HexitEngine
             multiplayerService = MultiplayerService.Singleton;
             voiceService = VoiceService.Singleton;
             localizationService = LocalizationService.Singleton;
+            canvasService = CanvasService.Singleton;
 
             if (lobbyService == null || multiplayerService == null || voiceService == null)
             {
@@ -93,6 +102,7 @@ namespace HexitEngine
 
             // 2. 서비스 간 연결 (서비스끼리는 서로를 모르고, 필요한 정보는 HEXITEngine이 전달)
             multiplayerService.SetGameStartedResolver(IsGameStarted);
+            multiplayerService.SetSessionLockedResolver(() => IsSessionLocked);
             voiceService.SetPlayerDataResolver(multiplayerService.TryGetPlayerDataBySteamId);
 
             // 3. 이전 세션 잔여물 정리
@@ -103,10 +113,13 @@ namespace HexitEngine
                 networkManager.Shutdown();
             }
 
-            // 4. 이벤트 연결
+            // 4. 로딩 화면 확인 (로딩 화면은 CanvasService가 BootstrapConfig를 보고 초기화 때 미리 생성해 둠)
+            if (canvasService == null) Dev.LogWarn("CanvasService가 없어 로딩 화면 없이 씬을 전환합니다.");
+
+            // 5. 이벤트 연결
             BindEvents();
 
-            // 5. 부트스트랩 씬이 아닌 곳에서 시작한 경우(씬 라우팅 끔) 바로 시작 처리
+            // 6. 부트스트랩 씬이 아닌 곳에서 시작한 경우(씬 라우팅 끔) 바로 시작 처리
             if (!IsBootstrapScene(SceneManager.GetActiveScene())) StartProcessOnce();
 
             return UniTask.CompletedTask;
@@ -216,32 +229,63 @@ namespace HexitEngine
         public void LeaveLobby() => LeaveSessionAsync(loadMainMenu: true).Forget();
 
         /// <summary>
-        /// [서버만] Ready → Game. 방장이 Play를 누른 순간 호출합니다. (플레이 가능 검증은 ReadyManager가 먼저 합니다)
-        /// 1. 세션 잠금: 이 순간부터 새 접속은 승인 단계에서 거절됩니다.
+        /// [서버만] 시작 준비 단계 진입: 세션을 잠급니다. ReadyManagerBase가 방장의 Play에서 호출합니다. (플레이 가능 검증은 ReadyManager가 먼저 합니다)
+        /// 1. 세션 잠금: 이 순간부터 새 접속은 승인 단계에서 거절되고, 레디 변경과 강퇴가 막힙니다.
         /// 2. Steam 로비 잠금: 목록에서 숨겨 새 시도 자체를 줄입니다. (보조 수단)
-        /// 3. Game 씬 네트워크 로드: 모든 클라이언트가 함께 이동합니다.
-        /// 씬 로드를 시작하지 못하면 1, 2를 되돌려 Ready에 그대로 남습니다. (방장은 다시 Play를 누를 수 있음)
+        /// 이미 잠겨 있으면 false
         /// </summary>
-        public void StartGame_OnlyServer()
+        public bool LockSessionForStart_OnlyServer()
+        {
+            if (!IsServer)
+            {
+                Dev.LogWarn("서버에서만 세션을 잠글 수 있습니다.");
+                return false;
+            }
+
+            if (IsSessionLocked) return false;
+
+            IsSessionLocked = true;
+            lobbyService.LockLobby();
+            return true;
+        }
+
+        /// <summary>
+        /// [서버만] 시작 준비 단계 취소: 세션 잠금을 풀고 다시 새 참가를 받습니다. (인원 부족, Game 씬 로드 실패)
+        /// 게임이 이미 진행 중이면(Game 씬 로드 시작 후) 무시합니다.
+        /// </summary>
+        public void UnlockSession_OnlyServer()
+        {
+            if (!IsServer || !IsSessionLocked || IsGameInProgress) return;
+
+            IsSessionLocked = false;
+            lobbyService.UnlockLobby();
+        }
+
+        /// <summary>
+        /// [서버만] Ready → Game. 시작 준비가 끝나면 ReadyManagerBase가 호출합니다. 세션이 잠겨 있어야 합니다.
+        /// Game 씬 네트워크 로드: 모든 클라이언트가 함께 이동합니다. 이 순간부터 게임 진행 중으로 판단합니다.
+        /// 씬 로드를 시작하지 못하면 false (잠금은 그대로이므로 호출한 쪽이 취소 처리)
+        /// </summary>
+        public bool LoadGame_OnlyServer()
         {
             if (!IsServer)
             {
                 Dev.LogWarn("서버에서만 게임을 시작할 수 있습니다.");
-                return;
+                return false;
             }
 
-            if (IsSessionLocked) return;
+            if (!IsSessionLocked || IsGameInProgress) return false;
 
-            IsSessionLocked = true;
-            lobbyService.LockLobby();
+            IsGameInProgress = true;
 
             if (!Loader.LoadNetwork(Loader.Scene.Game))
             {
-                IsSessionLocked = false;
-                lobbyService.UnlockLobby();
-
-                Dev.LogWarn("Game 씬 로드를 시작하지 못해 세션 잠금을 되돌렸습니다.");
+                IsGameInProgress = false;
+                Dev.LogWarn("Game 씬 로드를 시작하지 못했습니다.");
+                return false;
             }
+
+            return true;
         }
 
         /// <summary>
@@ -259,7 +303,7 @@ namespace HexitEngine
                 return;
             }
 
-            if (!IsSessionLocked) return;
+            if (!IsGameInProgress) return;
 
             multiplayerService.PurgeDisconnectedPlayers();
 
@@ -269,12 +313,13 @@ namespace HexitEngine
                 return;
             }
 
+            IsGameInProgress = false;
             IsSessionLocked = false;
             lobbyService.UnlockLobby();
         }
 
         /// <summary>
-        /// [호스트] 플레이어를 강퇴합니다. 강퇴는 Ready에서 Play를 누르기 전(세션이 잠기기 전)까지만 가능합니다.
+        /// [호스트] 플레이어를 강퇴합니다. 강퇴는 Ready에서 Play를 누르기 전(세션이 잠기기 전, 시작 준비 단계 제외)까지만 가능합니다.
         /// 로비에 강퇴 대상을 기록한 뒤(대상은 이를 감지하고 스스로 나감) 네트워크 연결을 끊습니다.
         /// </summary>
         public void KickPlayer(ulong targetClientId)
@@ -293,13 +338,14 @@ namespace HexitEngine
         }
 
         /// <summary>
-        /// 게임 진행 중(세션 잠김) 여부. (MultiplayerService에 전달)
-        /// - 서버: 호스트 메모리의 IsSessionLocked로 즉시 판단 (접속 승인, 이탈자 슬롯 유지에 사용)
+        /// 게임 진행 중 여부. (MultiplayerService에 전달)
+        /// - 서버: 호스트 메모리의 IsGameInProgress로 즉시 판단 (이탈자 슬롯 유지에 사용. 시작 준비 단계의 이탈은 슬롯 제거)
         /// - 클라이언트: 서버 값을 알 수 없으므로 참가한 로비의 잠금 상태로 판단 (연결 끊김 사유 선택에 사용)
+        /// 새 접속 거절은 이 값이 아니라 IsSessionLocked로 판단합니다.
         /// </summary>
         private bool IsGameStarted()
         {
-            if (IsServer) return IsSessionLocked;
+            if (IsServer) return IsGameInProgress;
 
             return lobbyService.JoinedLobby.HasValue && lobbyService.GetLobbyState(lobbyService.JoinedLobby.Value) == LobbyState.Playing;
         }
@@ -340,6 +386,7 @@ namespace HexitEngine
 
                 // 새 세션은 항상 잠금 해제 상태로 시작
                 IsSessionLocked = false;
+                IsGameInProgress = false;
 
                 // 실패 이벤트(OnDisconnected)는 MultiplayerService가 이미 발생시킴
                 if (!multiplayerService.StartHost(result))
@@ -452,6 +499,7 @@ namespace HexitEngine
         /// 보이스 → 로비 → 네트워크 순으로 세션을 나갑니다.
         /// NGO의 Shutdown은 호출 즉시 끝나지 않으므로, 종료가 끝날 때까지 기다린 뒤 메인메뉴를 로드합니다.
         /// (메인메뉴에 도착했을 때 이전 세션이 항상 정리되어 있도록 보장)
+        /// 메인메뉴로 가는 경우 시작하자마자 로딩 화면을 띄워 네트워크 종료 대기까지 가립니다.
         /// </summary>
         private async UniTaskVoid LeaveSessionAsync(bool loadMainMenu)
         {
@@ -461,9 +509,12 @@ namespace HexitEngine
             // 나가기 가림막 등이 즉시 반응할 수 있도록 맨 앞에서 알림
             OnLeaveSessionStarted?.Invoke(this, EventArgs.Empty);
 
+            if (loadMainMenu) BeginLoading(nameof(Loader.Scene.MainMenu));
+
             try
             {
                 IsSessionLocked = false;
+                IsGameInProgress = false;
 
                 if (voiceService.IsStartedSession) voiceService.StopSession();
 
@@ -479,9 +530,28 @@ namespace HexitEngine
                     Dev.LogWarn("[HEXITEngine] 네트워크 종료가 제한 시간 안에 끝나지 않았습니다.");
                 }
 
-                if (loadMainMenu) Loader.Load(Loader.Scene.MainMenu);
+                if (loadMainMenu)
+                {
+                    var operation = Loader.LoadAsync(Loader.Scene.MainMenu);
+
+                    if (operation == null)
+                    {
+                        Dev.LogError("MainMenu 씬 로드를 시작하지 못했습니다. Build Settings를 확인하세요.");
+                        CancelLoading();
+                        return;
+                    }
+
+                    SetLoadingOperation(operation);
+                    await operation.ToUniTask(cancellationToken: destroyCancellationToken);
+                    CompleteLoadingScene();
+                }
             }
             catch (OperationCanceledException) { }
+            catch (Exception e)
+            {
+                Dev.LogError($"세션 퇴장 중 예외: {e.Message}");
+                CancelLoading();
+            }
             finally { isLeavingSession = false; }
         }
 
@@ -514,6 +584,8 @@ namespace HexitEngine
             multiplayerService.OnClientConnected += HandleOnClientConnected;
             multiplayerService.OnDisconnected += HandleDisconnected;
             multiplayerService.OnHostDisconnected += HandleHostDisconnected;
+            multiplayerService.OnLocalSceneLoadStarted += HandleLocalSceneLoadStarted;
+            multiplayerService.OnLocalSceneLoadCompleted += HandleLocalSceneLoadCompleted;
         }
 
         private void UnbindEvents()
@@ -539,6 +611,8 @@ namespace HexitEngine
                 multiplayerService.OnClientConnected -= HandleOnClientConnected;
                 multiplayerService.OnDisconnected -= HandleDisconnected;
                 multiplayerService.OnHostDisconnected -= HandleHostDisconnected;
+                multiplayerService.OnLocalSceneLoadStarted -= HandleLocalSceneLoadStarted;
+                multiplayerService.OnLocalSceneLoadCompleted -= HandleLocalSceneLoadCompleted;
             }
         }
 
@@ -585,6 +659,10 @@ namespace HexitEngine
         private void HandleKickedFromLobby(object sender, EventArgs e)
         {
             IsSessionLocked = false;
+            IsGameInProgress = false;
+
+            // 강퇴 안내 창이 가려지지 않도록 로딩 중이면 즉시 걷음
+            if (!isLeavingSession) CancelLoading();
 
             if (voiceService.IsStartedSession) voiceService.StopSession();
             multiplayerService.ShutdownNetwork();
@@ -702,6 +780,10 @@ namespace HexitEngine
         private void HandleDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             IsSessionLocked = false;
+            IsGameInProgress = false;
+
+            // 끊김 안내 창이 가려지지 않도록 로딩 중이면 즉시 걷음 (내가 나가는 중이면 메인메뉴 로딩을 유지)
+            if (!isLeavingSession) CancelLoading();
 
             e.reason = GetSystemText(e.reasonKey);
             OnDisconnected?.Invoke(this, e);

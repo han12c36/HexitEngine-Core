@@ -138,6 +138,18 @@ MonoBehaviour:
     m_Localized: "Oda sahibi \xE7\u0131karsa oda herkes i\xE7in kapan\u0131r. Yine de \xE7\u0131k\u0131ls\u0131n m\u0131?"
     m_Metadata:
       m_Items: []
+  - m_Id: 730714463617024
+    m_Localized: "Oda olu\u015Fturuluyor..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730718838276096
+    m_Localized: "Odaya kat\u0131l\u0131n\u0131yor..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 730720834764800
+    m_Localized: "Ba\u011Flan\u0131l\u0131yor..."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

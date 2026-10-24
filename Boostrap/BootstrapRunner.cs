@@ -146,9 +146,7 @@ namespace HexitEngine
 
                 if (config.ForceSceneRouting)
                 {
-                    await SceneManager.LoadSceneAsync(config.NextSceneName)
-                        .ToUniTask(timing: PlayerLoopTiming.Update, cancellationToken: destroyToken)
-                        .Timeout(TimeSpan.FromSeconds(STEP_TIMEOUT_SECONDS));
+                    await LoadNextSceneAsync(config, destroyToken);
                 }
             }
             catch (TimeoutException)
@@ -166,6 +164,34 @@ namespace HexitEngine
             finally
             {
                 if (gameObject != null) Destroy(gameObject);
+            }
+        }
+
+        /// <summary>
+        /// 다음 씬(보통 MainMenu)으로 이동합니다. 앱 시작 때 단 한 번만 실행됩니다.
+        /// BootstrapConfig의 Show Loading On Boot가 켜져 있으면 로딩 화면을 보입니다. (HEXITEngine이 초기화된 뒤라 사용 가능)
+        /// </summary>
+        private static async UniTask LoadNextSceneAsync(BootstrapConfig config, CancellationToken destroyToken)
+        {
+            var hexit = config.ShowLoadingOnBoot && HEXITEngine.HasInstance ? HEXITEngine.Singleton : null;
+
+            var operation = SceneManager.LoadSceneAsync(config.NextSceneName);
+            if (operation == null) throw new Exception($"타겟 씬 '{config.NextSceneName}'을 로드하지 못했습니다.");
+
+            if (hexit != null) hexit.BeginLoading(config.NextSceneName, operation);
+
+            try
+            {
+                await operation
+                    .ToUniTask(timing: PlayerLoopTiming.Update, cancellationToken: destroyToken)
+                    .Timeout(TimeSpan.FromSeconds(STEP_TIMEOUT_SECONDS));
+
+                if (hexit != null) hexit.CompleteLoadingScene();
+            }
+            catch
+            {
+                if (hexit != null) hexit.CancelLoading();
+                throw;
             }
         }
 
